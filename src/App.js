@@ -1,10 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import AddAgenda from "./components/AddAgenda";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
+ return (
+  <div className="App">
+   <Routes>
+    <Route path="/add" element={<AddAgenda />}></Route>
+    {/* <Route path="/edit" element={<RegisterCompany />}></Route>
+    <Route path="/delete" element={<EditUser />}></Route> */}
+   </Routes>
+
+   {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
@@ -17,9 +25,9 @@ function App() {
         >
           Learn React
         </a>
-      </header>
-    </div>
-  );
+      </header> */}
+  </div>
+ );
 }
 
 export default App;
