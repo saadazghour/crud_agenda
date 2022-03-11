@@ -13,7 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const initialValue = {
  title: "",
@@ -32,7 +32,7 @@ const axios = require("axios");
 
 export default function EditAgenda() {
  const [values, setValues] = useState(initialValue);
- const [selectedDate, handleDateChange] = useState(initialValue.date);
+ const [selectedDate, setDateChange] = useState(initialValue.date);
  const [errors, setErrors] = useState({});
  const [isSubmit, setIsSubmit] = useState(false);
  const [open, setOpen] = useState(true);
@@ -48,6 +48,7 @@ export default function EditAgenda() {
  };
 
  const { id } = useParams();
+ const navigate = useNavigate();
  const loadById = (params) => {
   axios
    .get(`http://localhost:3001/agenda/${id}`)
@@ -82,6 +83,9 @@ export default function EditAgenda() {
      console.log("Data Edited with Success!!", res.data);
      res.data = data;
     }
+    setTimeout(() => {
+     navigate("/");
+    }, 1000);
    })
    .catch((err) => {
     console.log(err.response);
@@ -176,7 +180,9 @@ export default function EditAgenda() {
        value={selectedDate}
        error={errors.date ? true : false}
        helperText={errors.date ? errors.date : ""}
-       onChange={handleDateChange}
+       onChange={(newValue) => {
+        setDateChange(newValue);
+       }}
        renderInput={(props) => <TextField {...props} />}
       />
      </LocalizationProvider>
