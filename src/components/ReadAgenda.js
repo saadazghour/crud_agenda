@@ -59,7 +59,7 @@ export default function ReadAgenda() {
   axios
    .get("http://localhost:3001/agenda")
    .then((res) => {
-    setAgendaData(res.data);
+    setAgendaData(res.data.reverse());
    })
    .catch((err) => {
     console.log(err.response);
@@ -121,7 +121,11 @@ export default function ReadAgenda() {
              Edit
             </Button>
            </Link>
-           <Button color="secondary">Delete</Button>
+           <Link to={`/delete/${row.id}`} style={{ textDecoration: "none" }}>
+            <Button color="secondary" style={{ marginRight: "6px" }}>
+             Delete
+            </Button>
+           </Link>
           </ButtonGroup>
          </StyledTableCell>
         </StyledTableRow>
