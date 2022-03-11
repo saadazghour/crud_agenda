@@ -33,6 +33,7 @@ const axios = require("axios");
 export default function EditAgenda() {
  const [values, setValues] = useState(initialValue);
  const [selectedDate, setDateChange] = useState(initialValue.date);
+
  const [errors, setErrors] = useState({});
  const [isSubmit, setIsSubmit] = useState(false);
  const [open, setOpen] = useState(true);
@@ -55,6 +56,7 @@ export default function EditAgenda() {
    .get(`http://localhost:3001/agenda/${id}`)
    .then((res) => {
     setValues(res.data);
+    setDateChange(res.data.date);
    })
    .catch((err) => {
     console.log(err.response);

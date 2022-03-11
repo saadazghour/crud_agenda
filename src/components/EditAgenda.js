@@ -54,6 +54,7 @@ export default function EditAgenda() {
    .get(`http://localhost:3001/agenda/${id}`)
    .then((res) => {
     setValues(res.data);
+    setDateChange(res.data.date);
    })
    .catch((err) => {
     console.log(err.response);
