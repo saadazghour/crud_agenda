@@ -1,0 +1,36 @@
+{
+ "agenda": [
+  {
+   "id": 1,
+   "date": "2022-03-11",
+   "description": "descriptionn1",
+   "status": "status",
+   "title": "title1"
+  },
+  {
+   "id": 2,
+   "date": "2022-03-11",
+   "description": "Description Saad",
+   "status": "status Saad",
+   "title": "title Saad"
+  },
+
+  {
+   "title": "Saad",
+   "status": "Status",
+   "date": "2020-03-06",
+   "description": "DescriptionDescriptionDescriptionDescription",
+   "id": 4
+  }
+ ],
+ "comments": [
+  {
+   "id": 1,
+   "body": "some comment",
+   "postId": 1
+  }
+ ],
+ "profile": {
+  "name": "typicode"
+ }
+}

@@ -22,6 +22,17 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
  },
 }));
 
+const StyledTable = styled(TableCell)(({ theme }) => ({
+ [`&.${tableCellClasses.head}`]: {
+  backgroundColor: theme.palette.common.white,
+  color: theme.palette.common.white,
+ },
+
+ [`&.${tableCellClasses.body}`]: {
+  fontSize: 14,
+ },
+}));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
  "&:nth-of-type(odd)": {
   backgroundColor: theme.palette.action.hover,
@@ -32,50 +43,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
  },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
- return { name, calories, fat, carbs, protein };
-}
-
-const data = [
- {
-  id: 1,
-  date: "2022-03-11",
-  description: "descriptionn1",
-  status: "status",
-  title: "title1",
- },
- {
-  id: 2,
-  date: "2022-03-11",
-  description: "descriptionn2",
-  status: "status",
-  title: "title2",
- },
- {
-  id: 3,
-  date: "2022-03-11",
-  description: "descriptionn3",
-  status: "status",
-  title: "title3",
- },
-];
-
-const rows = [
- createData("Frozen yoghurt", 159, 6.0, 24),
- createData("Ice cream sandwich", 237, 9.0, 37),
- createData("Eclair", 262, 16.0, 24),
- createData("Cupcake", 305, 3.7, 67),
- createData("Gingerbread", 356, 16.0, 49),
-];
-
 const useStyles = makeStyles({
  table: {
   marginTop: 100,
  },
 });
 
+const axios = require("axios");
+
 export default function ReadAgenda() {
+ const [agendaData, setAgendaData] = useState([]);
  const classess = useStyles();
+
+ const loadAgenda = (params) => {
+  axios
+   .get("http://localhost:3001/agenda")
+   .then((res) => {
+    setAgendaData(res.data);
+   })
+   .catch((err) => {
+    console.log(err.response);
+   });
+ };
+
+ useEffect(() => {
+  loadAgenda();
+ }, []);
 
  return (
   <div>
@@ -87,7 +80,23 @@ export default function ReadAgenda() {
     >
      <TableHead>
       <TableRow>
-       <StyledTableCell>Title</StyledTableCell>
+       <StyledTable align="right"></StyledTable>
+       <StyledTable align="right"></StyledTable>
+       <StyledTable align="right"></StyledTable>
+       <StyledTable align="right"></StyledTable>
+       <StyledTable align="center">
+        <ButtonGroup variant="outlined" aria-label="outlined button group">
+         <Link to="/add" style={{ textDecoration: "none" }}>
+          <Button color="primary" style={{ marginRight: "6px" }}>
+           Add
+          </Button>
+         </Link>
+        </ButtonGroup>
+       </StyledTable>
+      </TableRow>
+
+      <TableRow>
+       <StyledTableCell align="right">Title</StyledTableCell>
        <StyledTableCell align="right">Status</StyledTableCell>
        <StyledTableCell align="right">Date</StyledTableCell>
        <StyledTableCell align="right">Description</StyledTableCell>
@@ -95,13 +104,13 @@ export default function ReadAgenda() {
       </TableRow>
      </TableHead>
      <TableBody>
-      {data &&
-       data.map((row) => (
+      {agendaData &&
+       agendaData.map((row) => (
         <StyledTableRow key={row.id}>
-         <StyledTableCell component="th" scope="row">
+         {/* <StyledTableCell component="th" scope="row">
           {row.title}
-         </StyledTableCell>
-         {/* <StyledTableCell align="right">{row.title}</StyledTableCell> */}
+         </StyledTableCell> */}
+         <StyledTableCell align="right">{row.title}</StyledTableCell>
          <StyledTableCell align="right">{row.status}</StyledTableCell>
          <StyledTableCell align="right">{row.date}</StyledTableCell>
          <StyledTableCell align="right">{row.description}</StyledTableCell>
