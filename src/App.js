@@ -2,7 +2,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import AddAgenda from "./components/AddAgenda";
 import ReadAgenda from "./components/ReadAgenda";
-import EdidAgenda from "./components/EdidAgenda";
+import EditAgenda from "./components/EditAgenda";
+import DeleteAgenda from "./components/DeleteAgenda";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -11,7 +12,8 @@ function App() {
    <Routes>
     <Route path="/" element={<ReadAgenda />}></Route>
     <Route path="/add" element={<AddAgenda />}></Route>
-    <Route path="/edit/:id" element={<EdidAgenda />}></Route>
+    <Route path="/edit/:id" element={<EditAgenda />}></Route>
+    <Route path="/delete/:id" element={<DeleteAgenda />}></Route>
     {/* <Route path="/edit" element={<RegisterCompany />}></Route> */}
    </Routes>
 
