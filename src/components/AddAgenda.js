@@ -2,11 +2,18 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import DatePicker from "@material-ui/lab/DatePicker";
+import IconButton from "@mui/material/IconButton";
+import Collapse from "@mui/material/Collapse";
+import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const initialValue = {
  title: "",
@@ -15,11 +22,21 @@ const initialValue = {
  date: new Date(),
 };
 
+const useStyles = makeStyles({
+ table: {
+  marginTop: 100,
+ },
+});
+
+const axios = require("axios");
+
 export default function AddAgenda() {
  const [values, setValues] = useState(initialValue);
  const [selectedDate, handleDateChange] = useState(initialValue.date);
  const [errors, setErrors] = useState({});
  const [isSubmit, setIsSubmit] = useState(false);
+ const [open, setOpen] = useState(true);
+ const classess = useStyles();
 
  const handleChange = (event) => {
   const { name, value } = event.target;
@@ -30,18 +47,43 @@ export default function AddAgenda() {
   });
  };
 
+ const navigate = useNavigate();
+
  const handleSubmit = (event) => {
   event.preventDefault();
   setErrors(validate(values));
   setIsSubmit(true);
- };
 
- useEffect(() => {
-  if (Object.keys(errors).length === 0 && isSubmit) {
-   console.log("values", values);
-   console.log("Date", moment(selectedDate).format("YYYY-MM-DD"));
-  }
- }, [errors]);
+  const data = {
+   title: values.title,
+   status: values.status,
+   date: moment(selectedDate).format("YYYY-MM-DD"),
+   description: values.description,
+  };
+
+  axios
+   .post("http://localhost:3001/agenda", data)
+   .then((res) => {
+    if (res.data && Object.keys(errors).length === 0 && isSubmit) {
+     console.log("Data Registred!!", res.data);
+     res.data = data;
+    }
+
+    setValues({
+     title: "",
+     status: "",
+     description: "",
+     date: new Date(),
+    });
+
+    setTimeout(() => {
+     navigate("/");
+    }, 1000);
+   })
+   .catch((err) => {
+    console.log(err.response);
+   });
+ };
 
  const validate = (value) => {
   const errors = {};
@@ -64,6 +106,30 @@ export default function AddAgenda() {
  return (
   <div>
    {/* <pre>{JSON.stringify(values, undefined, 2)}</pre> */}
+
+   {Object.keys(errors).length === 0 && isSubmit ? (
+    <Collapse in={open}>
+     <Alert
+      action={
+       <IconButton
+        aria-label="close"
+        color="inherit"
+        size="small"
+        onClick={() => {
+         setOpen(false);
+        }}
+       >
+        <CloseIcon fontSize="inherit" />
+       </IconButton>
+      }
+      sx={{ mb: 2 }}
+     >
+      Added successfully!!
+     </Alert>
+    </Collapse>
+   ) : (
+    ""
+   )}
    <Box
     component="form"
     sx={{
@@ -72,7 +138,7 @@ export default function AddAgenda() {
     noValidate
     autoComplete="off"
    >
-    <div>
+    <div className={classess.table}>
      <TextField
       id="outlined-textarea"
       label="Title"
@@ -83,6 +149,8 @@ export default function AddAgenda() {
       name="title"
       value={values.title}
       onChange={handleChange}
+      required
+      focused
      />
     </div>
     <div>
@@ -96,6 +164,8 @@ export default function AddAgenda() {
       name="status"
       value={values.status}
       onChange={handleChange}
+      required
+      focused
      />
     </div>
     <div>
@@ -121,6 +191,8 @@ export default function AddAgenda() {
       rows={4}
       value={values.description}
       onChange={handleChange}
+      required
+      focused
      />
     </div>
    </Box>
@@ -135,6 +207,11 @@ export default function AddAgenda() {
     <Button variant="outlined" onClick={handleSubmit}>
      Register
     </Button>
+    <Link to="/" style={{ textDecoration: "none" }}>
+     <Button variant="outlined" color="error">
+      Cancel
+     </Button>
+    </Link>
    </Stack>
   </div>
  );
