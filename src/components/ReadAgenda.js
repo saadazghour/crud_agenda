@@ -107,9 +107,6 @@ export default function ReadAgenda() {
       {agendaData &&
        agendaData.map((row) => (
         <StyledTableRow key={row.id}>
-         {/* <StyledTableCell component="th" scope="row">
-          {row.title}
-         </StyledTableCell> */}
          <StyledTableCell align="right">{row.title}</StyledTableCell>
          <StyledTableCell align="right">{row.status}</StyledTableCell>
          <StyledTableCell align="right">{row.date}</StyledTableCell>

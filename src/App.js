@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import AddAgenda from "./components/AddAgenda";
 import ReadAgenda from "./components/ReadAgenda";
@@ -14,23 +13,7 @@ function App() {
     <Route path="/add" element={<AddAgenda />}></Route>
     <Route path="/edit/:id" element={<EditAgenda />}></Route>
     <Route path="/delete/:id" element={<DeleteAgenda />}></Route>
-    {/* <Route path="/edit" element={<RegisterCompany />}></Route> */}
    </Routes>
-
-   {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
   </div>
  );
 }
