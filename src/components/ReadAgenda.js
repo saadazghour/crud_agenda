@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
+import {
+ DataGrid,
+ GridToolbarContainer,
+ GridToolbarExport,
+} from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { makeStyles } from "@mui/styles";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { Link } from "react-router-dom";
+import TableRow from "@mui/material/TableRow";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableContainer from "@mui/material/TableContainer";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
- [`&.${tableCellClasses.head}`]: {
-  backgroundColor: theme.palette.common.black,
-  color: theme.palette.common.white,
+const useStyles = makeStyles({
+ table: {
+  marginTop: 20,
  },
- [`&.${tableCellClasses.body}`]: {
-  fontSize: 14,
- },
-}));
+});
 
 const StyledTable = styled(TableCell)(({ theme }) => ({
  [`&.${tableCellClasses.head}`]: {
@@ -33,27 +33,56 @@ const StyledTable = styled(TableCell)(({ theme }) => ({
  },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
- "&:nth-of-type(odd)": {
-  backgroundColor: theme.palette.action.hover,
- },
- // hide last border
- "&:last-child td, &:last-child th": {
-  border: 0,
- },
-}));
-
-const useStyles = makeStyles({
- table: {
-  marginTop: 100,
- },
-});
-
 const axios = require("axios");
 
-export default function ReadAgenda() {
+export default function ExportDefaultToolbar() {
  const [agendaData, setAgendaData] = useState([]);
  const classess = useStyles();
+
+ const renderEditButton = (params) => {
+  return (
+   <div>
+    <ButtonGroup
+     key={params.id}
+     variant="outlined"
+     aria-label="outlined button group"
+    >
+     <Link to={`/edit/${params.id}`} style={{ textDecoration: "none" }}>
+      <Button color="primary" style={{ marginRight: "6px" }}>
+       Edit
+      </Button>
+     </Link>
+     <Link to={`/delete/${params.id}`} style={{ textDecoration: "none" }}>
+      <Button color="secondary" style={{ marginRight: "6px" }}>
+       Delete
+      </Button>
+     </Link>
+    </ButtonGroup>
+   </div>
+  );
+ };
+
+ const columns = [
+  {
+   field: "title",
+   headerName: "Title",
+   sortable: false,
+   flex: 1,
+   disableColumnSelector: true,
+  },
+  { field: "status", headerName: "Status", sortable: false, flex: 1 },
+  { field: "date", headerName: "Date", sortable: false, flex: 1 },
+  { field: "description", headerName: "Description", sortable: false, flex: 1 },
+  {
+   field: "action",
+   headerName: "Actions",
+   sortable: false,
+   flex: 1,
+   disableExport: true,
+   renderCell: renderEditButton,
+   disableClickEventBubbling: true,
+  },
+ ];
 
  const loadAgenda = (params) => {
   axios
@@ -70,8 +99,16 @@ export default function ReadAgenda() {
   loadAgenda();
  }, []);
 
+ function CustomToolbar() {
+  return (
+   <GridToolbarContainer>
+    <GridToolbarExport />
+   </GridToolbarContainer>
+  );
+ }
+
  return (
-  <div>
+  <div className={classess.table} style={{ height: 400, width: "100%" }}>
    <TableContainer component={Paper}>
     <Table
      className={classess.table}
@@ -84,7 +121,7 @@ export default function ReadAgenda() {
        <StyledTable align="right"></StyledTable>
        <StyledTable align="right"></StyledTable>
        <StyledTable align="right"></StyledTable>
-       <StyledTable align="center">
+       <StyledTable align="right">
         <ButtonGroup variant="outlined" aria-label="outlined button group">
          <Link to="/add" style={{ textDecoration: "none" }}>
           <Button color="primary" style={{ marginRight: "6px" }}>
@@ -94,42 +131,18 @@ export default function ReadAgenda() {
         </ButtonGroup>
        </StyledTable>
       </TableRow>
-
-      <TableRow>
-       <StyledTableCell align="right">Title</StyledTableCell>
-       <StyledTableCell align="right">Status</StyledTableCell>
-       <StyledTableCell align="right">Date</StyledTableCell>
-       <StyledTableCell align="right">Description</StyledTableCell>
-       <StyledTableCell align="center">Actions</StyledTableCell>
-      </TableRow>
      </TableHead>
-     <TableBody>
-      {agendaData &&
-       agendaData.map((row) => (
-        <StyledTableRow key={row.id}>
-         <StyledTableCell align="right">{row.title}</StyledTableCell>
-         <StyledTableCell align="right">{row.status}</StyledTableCell>
-         <StyledTableCell align="right">{row.date}</StyledTableCell>
-         <StyledTableCell align="right">{row.description}</StyledTableCell>
-         <StyledTableCell align="center">
-          <ButtonGroup variant="outlined" aria-label="outlined button group">
-           <Link to={`/edit/${row.id}`} style={{ textDecoration: "none" }}>
-            <Button color="primary" style={{ marginRight: "6px" }}>
-             Edit
-            </Button>
-           </Link>
-           <Link to={`/delete/${row.id}`} style={{ textDecoration: "none" }}>
-            <Button color="secondary" style={{ marginRight: "6px" }}>
-             Delete
-            </Button>
-           </Link>
-          </ButtonGroup>
-         </StyledTableCell>
-        </StyledTableRow>
-       ))}
-     </TableBody>
     </Table>
    </TableContainer>
+
+   <DataGrid
+    pageSize={10}
+    rows={agendaData}
+    columns={columns}
+    disableColumnFilter={true}
+    disableDensitySelector={true}
+    components={{ Toolbar: CustomToolbar }}
+   />
   </div>
  );
 }
