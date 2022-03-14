@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import Stack from "@mui/material/Stack";
@@ -41,18 +41,19 @@ export default function AddAgenda() {
  const handleChange = (event) => {
   const { name, value } = event.target;
 
-  setValues({
+  const newValues = {
    ...values,
    [name]: value,
-  });
+  };
+
+  setValues(newValues);
+  setErrors(validate(newValues));
  };
 
  const navigate = useNavigate();
 
  const handleSubmit = (event) => {
   event.preventDefault();
-  setErrors(validate(values));
-  setIsSubmit(true);
 
   const data = {
    title: values.title,
@@ -61,28 +62,33 @@ export default function AddAgenda() {
    description: values.description,
   };
 
-  axios
-   .post("http://localhost:3001/agenda", data)
-   .then((res) => {
-    if (res.data && Object.keys(errors).length === 0 && isSubmit) {
-     console.log("Data Registred!!", res.data);
-     res.data = data;
-    }
+  const err = validate(values);
 
-    setValues({
-     title: "",
-     status: "",
-     description: "",
-     date: new Date(),
+  if (Object.keys(err).length === 0 && !isSubmit) {
+   setIsSubmit(true);
+   axios
+    .post("http://localhost:3001/agenda", data)
+    .then((res) => {
+     //  console.log("Data Registred!!", res.data);
+     setIsSubmit(false);
+
+     setValues({
+      title: "",
+      status: "",
+      description: "",
+      date: new Date(),
+     });
+
+     setTimeout(() => {
+      navigate("/");
+     }, 1000);
+    })
+    .catch((err) => {
+     //  console.log(err.response);
+     setErrors(err.response);
+     setIsSubmit(false);
     });
-
-    setTimeout(() => {
-     navigate("/");
-    }, 1000);
-   })
-   .catch((err) => {
-    console.log(err.response);
-   });
+  }
  };
 
  const validate = (value) => {

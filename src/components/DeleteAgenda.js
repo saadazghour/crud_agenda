@@ -59,13 +59,13 @@ export default function EditAgenda() {
     setDateChange(res.data.date);
    })
    .catch((err) => {
-    console.log(err.response);
+    setErrors(err.response);
    });
  };
 
  useEffect(() => {
   loadById();
- }, []);
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
  const handleSubmit = (event) => {
   event.preventDefault();
@@ -87,7 +87,7 @@ export default function EditAgenda() {
     }, 1000);
    })
    .catch((err) => {
-    console.log(err.response);
+    setErrors(err.response);
    });
  };
 

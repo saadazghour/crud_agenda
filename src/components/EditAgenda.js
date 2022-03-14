@@ -41,10 +41,13 @@ export default function EditAgenda() {
  const handleChange = (event) => {
   const { name, value } = event.target;
 
-  setValues({
+  const newValue = {
    ...values,
    [name]: value,
-  });
+  };
+
+  setValues(newValue);
+  setErrors(validate(newValue));
  };
 
  const { id } = useParams();
@@ -57,18 +60,16 @@ export default function EditAgenda() {
     setDateChange(res.data.date);
    })
    .catch((err) => {
-    console.log(err.response);
+    setErrors(err.response);
    });
  };
 
  useEffect(() => {
   loadById();
- }, []);
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
  const handleSubmit = (event) => {
   event.preventDefault();
-  setErrors(validate(values));
-  setIsSubmit(true);
 
   const data = {
    title: values.title,
@@ -77,20 +78,26 @@ export default function EditAgenda() {
    description: values.description,
   };
 
-  axios
-   .put(`http://localhost:3001/agenda/${id}`, data)
-   .then((res) => {
-    if (res.data && Object.keys(errors).length === 0 && isSubmit) {
-     console.log("Data Edited with Success!!", res.data);
-     res.data = data;
-    }
-    setTimeout(() => {
-     navigate("/");
-    }, 1000);
-   })
-   .catch((err) => {
-    console.log(err.response);
-   });
+  const err = validate(values);
+
+  if (Object.keys(err).length === 0 && !isSubmit) {
+   setIsSubmit(true);
+   axios
+    .put(`http://localhost:3001/agenda/${id}`, data)
+    .then((res) => {
+     //  console.log("Data Edited!!", res.data);
+     setIsSubmit(false);
+
+     setTimeout(() => {
+      navigate("/");
+     }, 1000);
+    })
+    .catch((err) => {
+     //  console.log(err.response);
+     setErrors(err.response);
+     setIsSubmit(false);
+    });
+  }
  };
 
  const validate = (value) => {
@@ -136,6 +143,7 @@ export default function EditAgenda() {
    ) : (
     ""
    )}
+
    <Box
     component="form"
     sx={{
