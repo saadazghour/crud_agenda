@@ -16,217 +16,217 @@ import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 
 const initialValue = {
- title: "",
- status: "",
- description: "",
- date: new Date(),
+  title: "",
+  status: "",
+  description: "",
+  date: new Date(),
 };
 
 const useStyles = makeStyles({
- table: {
-  marginTop: 100,
- },
+  table: {
+    marginTop: 100,
+  },
 });
 
 const axios = require("axios");
 
 export default function EditAgenda() {
- const [values, setValues] = useState(initialValue);
- const [selectedDate, setDateChange] = useState(initialValue.date);
- const [errors, setErrors] = useState({});
- const [isSubmit, setIsSubmit] = useState(false);
- const [open, setOpen] = useState(true);
- const classess = useStyles();
+  const [values, setValues] = useState(initialValue);
+  const [selectedDate, setDateChange] = useState(initialValue.date);
+  const [errors, setErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [open, setOpen] = useState(true);
+  const classess = useStyles();
 
- const handleChange = (event) => {
-  const { name, value } = event.target;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-  const newValue = {
-   ...values,
-   [name]: value,
+    const newValue = {
+      ...values,
+      [name]: value,
+    };
+
+    setValues(newValue);
+    setErrors(validate(newValue));
   };
 
-  setValues(newValue);
-  setErrors(validate(newValue));
- };
-
- const { id } = useParams();
- const navigate = useNavigate();
- const loadById = (params) => {
-  axios
-   .get(`http://localhost:3001/agenda/${id}`)
-   .then((res) => {
-    setValues(res.data);
-    setDateChange(res.data.date);
-   })
-   .catch((err) => {
-    setErrors(err.response);
-   });
- };
-
- useEffect(() => {
-  loadById();
- }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
- const handleSubmit = (event) => {
-  event.preventDefault();
-
-  const data = {
-   title: values.title,
-   status: values.status,
-   date: moment(selectedDate).format("YYYY-MM-DD"),
-   description: values.description,
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const loadById = (params) => {
+    axios
+      .get(`http://localhost:3001/agenda/${id}`)
+      .then((res) => {
+        setValues(res.data);
+        setDateChange(res.data.date);
+      })
+      .catch((err) => {
+        setErrors(err.response);
+      });
   };
 
-  const err = validate(values);
+  useEffect(() => {
+    loadById();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (Object.keys(err).length === 0 && !isSubmit) {
-   setIsSubmit(true);
-   axios
-    .put(`http://localhost:3001/agenda/${id}`, data)
-    .then((res) => {
-     setIsSubmit(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-     setTimeout(() => {
-      navigate("/");
-     }, 1000);
-    })
-    .catch((err) => {
-     setErrors(err.response);
-     setIsSubmit(false);
-    });
-  }
- };
+    const data = {
+      title: values.title,
+      status: values.status,
+      date: moment(selectedDate).format("YYYY-MM-DD"),
+      description: values.description,
+    };
 
- const validate = (value) => {
-  const errors = {};
+    const err = validate(values);
 
-  if (!value.title) {
-   errors.title = "Title is Required!";
-  }
-  if (!value.status) {
-   errors.status = "Status is Required!";
-  }
-  if (!value.description) {
-   errors.description = "Description is Required!";
-  }
-  if (!value.date) {
-   errors.date = "Date is Required!";
-  }
-  return errors;
- };
+    if (Object.keys(err).length === 0 && !isSubmit) {
+      setIsSubmit(true);
+      axios
+        .put(`http://localhost:3001/agenda/${id}`, data)
+        .then((res) => {
+          setIsSubmit(false);
 
- return (
-  <div>
-   {Object.keys(errors).length === 0 && isSubmit ? (
-    <Collapse in={open}>
-     <Alert
-      action={
-       <IconButton
-        aria-label="close"
-        color="inherit"
-        size="small"
-        onClick={() => {
-         setOpen(false);
+          setTimeout(() => {
+            navigate("/");
+          }, 1000);
+        })
+        .catch((err) => {
+          setErrors(err.response);
+          setIsSubmit(false);
+        });
+    }
+  };
+
+  const validate = (value) => {
+    const errors = {};
+
+    if (!value.title) {
+      errors.title = "Title is Required!";
+    }
+    if (!value.status) {
+      errors.status = "Status is Required!";
+    }
+    if (!value.description) {
+      errors.description = "Description is Required!";
+    }
+    if (!value.date) {
+      errors.date = "Date is Required!";
+    }
+    return errors;
+  };
+
+  return (
+    <div>
+      {Object.keys(errors).length === 0 && isSubmit ? (
+        <Collapse in={open}>
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            Edited successfully!!
+          </Alert>
+        </Collapse>
+      ) : (
+        ""
+      )}
+
+      <Box
+        component="form"
+        sx={{
+          "& .MuiTextField-root": { m: 2, width: "25ch" },
         }}
-       >
-        <CloseIcon fontSize="inherit" />
-       </IconButton>
-      }
-      sx={{ mb: 2 }}
-     >
-      Edited successfully!!
-     </Alert>
-    </Collapse>
-   ) : (
-    ""
-   )}
-
-   <Box
-    component="form"
-    sx={{
-     "& .MuiTextField-root": { m: 2, width: "25ch" },
-    }}
-    noValidate
-    autoComplete="off"
-   >
-    <div className={classess.table}>
-     <TextField
-      id="outlined-textarea"
-      label="Title"
-      placeholder="Title"
-      error={errors.title ? true : false}
-      helperText={errors.title ? errors.title : ""}
-      multiline
-      name="title"
-      value={values.title}
-      onChange={handleChange}
-      required
-      focused
-     />
+        noValidate
+        autoComplete="off"
+      >
+        <div className={classess.table}>
+          <TextField
+            id="outlined-textarea"
+            label="Title"
+            placeholder="Title"
+            error={errors.title ? true : false}
+            helperText={errors.title ? errors.title : ""}
+            multiline
+            name="title"
+            value={values.title}
+            onChange={handleChange}
+            required
+            focused
+          />
+        </div>
+        <div>
+          <TextField
+            id="outlined-textarea"
+            label="Status"
+            placeholder="Status"
+            error={errors.status ? true : false}
+            helperText={errors.status ? errors.status : ""}
+            multiline
+            name="status"
+            value={values.status}
+            onChange={handleChange}
+            required
+            focused
+          />
+        </div>
+        <div>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date :"
+              value={selectedDate}
+              error={errors.date ? true : false}
+              helperText={errors.date ? errors.date : ""}
+              onChange={(newValue) => {
+                setDateChange(newValue);
+              }}
+              renderInput={(props) => <TextField {...props} />}
+            />
+          </LocalizationProvider>
+        </div>
+        <div>
+          <TextField
+            id="outlined-multiline-static"
+            label="Description"
+            multiline
+            error={errors.description ? true : false}
+            helperText={errors.description ? errors.description : ""}
+            name="description"
+            rows={4}
+            value={values.description}
+            onChange={handleChange}
+            required
+            focused
+          />
+        </div>
+      </Box>
+      <Stack
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        mt={2}
+        mb={4}
+        spacing={4}
+      >
+        <Button variant="outlined" onClick={handleSubmit}>
+          Edit
+        </Button>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button variant="outlined" color="error">
+            Cancel
+          </Button>
+        </Link>
+      </Stack>
     </div>
-    <div>
-     <TextField
-      id="outlined-textarea"
-      label="Status"
-      placeholder="Status"
-      error={errors.status ? true : false}
-      helperText={errors.status ? errors.status : ""}
-      multiline
-      name="status"
-      value={values.status}
-      onChange={handleChange}
-      required
-      focused
-     />
-    </div>
-    <div>
-     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <DatePicker
-       label="Date :"
-       value={selectedDate}
-       error={errors.date ? true : false}
-       helperText={errors.date ? errors.date : ""}
-       onChange={(newValue) => {
-        setDateChange(newValue);
-       }}
-       renderInput={(props) => <TextField {...props} />}
-      />
-     </LocalizationProvider>
-    </div>
-    <div>
-     <TextField
-      id="outlined-multiline-static"
-      label="Description"
-      multiline
-      error={errors.description ? true : false}
-      helperText={errors.description ? errors.description : ""}
-      name="description"
-      rows={4}
-      value={values.description}
-      onChange={handleChange}
-      required
-      focused
-     />
-    </div>
-   </Box>
-   <Stack
-    direction="row"
-    justifyContent="center"
-    alignItems="center"
-    mt={2}
-    mb={4}
-    spacing={4}
-   >
-    <Button variant="outlined" onClick={handleSubmit}>
-     Edit
-    </Button>
-    <Link to="/" style={{ textDecoration: "none" }}>
-     <Button variant="outlined" color="error">
-      Cancel
-     </Button>
-    </Link>
-   </Stack>
-  </div>
- );
+  );
 }
