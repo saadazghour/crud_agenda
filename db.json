@@ -1,36 +1,11 @@
 {
  "agenda": [
   {
-   "id": 1,
-   "date": "2022-03-11",
-   "description": "descriptionn1",
-   "status": "status",
-   "title": "title1"
-  },
-  {
-   "id": 2,
-   "date": "2022-03-11",
-   "description": "Description Saad",
-   "status": "status Saad",
-   "title": "title Saad"
-  },
-
-  {
-   "title": "Saad",
-   "status": "Status",
-   "date": "2020-03-06",
-   "description": "DescriptionDescriptionDescriptionDescription",
-   "id": 4
+   "title": "saad 1",
+   "status": "status 1",
+   "date": "1970-01-01",
+   "description": "decsription 1",
+   "id": 11
   }
- ],
- "comments": [
-  {
-   "id": 1,
-   "body": "some comment",
-   "postId": 1
-  }
- ],
- "profile": {
-  "name": "typicode"
- }
+ ]
 }

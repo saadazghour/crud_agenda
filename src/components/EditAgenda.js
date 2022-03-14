@@ -85,7 +85,6 @@ export default function EditAgenda() {
    axios
     .put(`http://localhost:3001/agenda/${id}`, data)
     .then((res) => {
-     //  console.log("Data Edited!!", res.data);
      setIsSubmit(false);
 
      setTimeout(() => {
@@ -93,7 +92,6 @@ export default function EditAgenda() {
      }, 1000);
     })
     .catch((err) => {
-     //  console.log(err.response);
      setErrors(err.response);
      setIsSubmit(false);
     });

@@ -69,7 +69,6 @@ export default function AddAgenda() {
    axios
     .post("http://localhost:3001/agenda", data)
     .then((res) => {
-     //  console.log("Data Registred!!", res.data);
      setIsSubmit(false);
 
      setValues({
@@ -84,7 +83,6 @@ export default function AddAgenda() {
      }, 1000);
     })
     .catch((err) => {
-     //  console.log(err.response);
      setErrors(err.response);
      setIsSubmit(false);
     });
